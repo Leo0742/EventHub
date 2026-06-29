@@ -1,583 +1,233 @@
-# Event Platform MVP
+# RDevents
 
-Полнофункциональная платформа для управления мероприятиями с публичным сайтом, регистрацией, админ-панелью, командной механикой, волонтерами и аналитикой.
+<p align="center">
+  <b>Collaborative full-stack event-management platform</b><br />
+  Next.js web app · Express API · Prisma/PostgreSQL · Admin panel · Teams · Volunteers · Analytics · Docker
+</p>
 
-## 🏗 Архитектура
+<p align="center">
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-475569?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-1E3A8A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-1E3A8A?style=for-the-badge&logo=typescript&logoColor=60A5FA" alt="TypeScript" /></a>
+  <a href="https://expressjs.com/"><img src="https://img.shields.io/badge/Express-475569?style=for-the-badge&logo=express&logoColor=white" alt="Express" /></a>
+  <a href="https://www.prisma.io/"><img src="https://img.shields.io/badge/Prisma-334155?style=for-the-badge&logo=prisma&logoColor=CBD5E1" alt="Prisma" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-315A8C?style=for-the-badge&logo=postgresql&logoColor=93C5FD" alt="PostgreSQL" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-1E5F8A?style=for-the-badge&logo=docker&logoColor=60A5FA" alt="Docker" /></a>
+</p>
 
-Проект построен как monorepo с использованием:
-- **Frontend**: Next.js 16.2.4 + React 19 + next-intl (i18n)
-- **Backend**: Express + TypeScript + Prisma ORM
-- **Database**: PostgreSQL 17
-- **Runtime**: Node.js 25.6+
-- **Package Manager**: pnpm 10.33+
-- **Monorepo**: Turbo 2.9.6
+> This is a **collaborative project / contributed fork**. The fork relationship is intentionally preserved so the real development history stays visible, including the commit and pull-request history that shows my work on the project.
 
+## Overview
+
+RDevents is a full-stack platform for managing public events. It includes a public event website, user registration, personal cabinet, team mechanics, volunteer applications, admin workflows, media management, analytics, email operations, and production-oriented deployment tooling.
+
+The repository is organized as a TypeScript monorepo with a Next.js frontend, Express API, Prisma/PostgreSQL database layer, shared packages, Docker Compose runtime, and documentation for deployment and operational workflows.
+
+## My contribution
+
+Most of my work in this fork focused on making the platform closer to a real event-management product rather than a static demo. The visible project history includes work across UI, backend APIs, database schema, admin workflows, production safety, testing, and deployment reliability.
+
+Key areas I worked on include:
+
+- improving the public event experience, cabinet/dashboard flows, and admin-facing UI;
+- implementing and fixing media-bank flows, including public media layout, upload/runtime issues, and server/client boundaries;
+- working on support features such as a global support mini-chat, support ticket flows, and user/admin support UX;
+- strengthening admin tools for event management, users, teams, volunteers, email audiences, direct email flows, and analytics;
+- extending Express/Prisma backend modules, validation, auth/RBAC behavior, and production-safe data handling;
+- improving Docker, database, migration, seed, cleanup, CI/test, typecheck, and deployment-related reliability.
+
+I keep this repository as a fork instead of re-uploading it so the collaboration context and real development history remain transparent.
+
+## What this project demonstrates
+
+- **Full-stack product development** with a Next.js frontend, Express API, shared packages, and PostgreSQL-backed data model.
+- **Backend domain modeling** for events, users, roles, teams, volunteers, support, media, analytics, email, audit logs, and admin workflows.
+- **Production-minded engineering**: environment contracts, Docker Compose, migrations, health/readiness checks, seed data boundaries, safe cleanup, and deployment runbooks.
+- **Admin and operations tooling**: role-based admin panel, team/participant management, volunteer moderation, email operations, media bank, and analytics surfaces.
+- **Reliability work**: type checking, linting, tests, CI/runtime fixes, server/client boundary fixes, and safer error handling.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Web[Next.js Web App] --> API[Express API]
+    API --> DB[(PostgreSQL / Prisma)]
+    API --> Email[Email Provider / Resend]
+    API --> Media[Media Storage]
+    API --> Shared[Shared Packages]
+    Web --> UI[Shared UI Package]
+    Web --> Shared
+
+    Admin[Admin Panel] --> Web
+    Cabinet[User Cabinet] --> Web
+    Public[Public Event Site] --> Web
 ```
-event-platform-mvp/
-├── apps/web/              # Next.js frontend application
-├── services/api/          # Express backend API
-├── packages/
-│   ├── ui/               # Shared UI components
-│   └── shared/           # Shared types and utilities
-├── infra/                # Infrastructure configs (nginx, etc)
-└── docs/                 # Documentation
+
+## Main applications
+
+| Area | Path | Purpose |
+|---|---|---|
+| Web app | `apps/web` | Next.js frontend for public pages, auth flows, user cabinet, admin panel, event pages, support, media, and analytics surfaces. |
+| API service | `services/api` | Express + TypeScript backend for auth, events, teams, volunteers, admin workflows, media, analytics, email, support, and Prisma access. |
+| Shared UI | `packages/ui` | Shared styles and UI primitives used by the web application. |
+| Shared domain | `packages/shared` | Shared types, contracts, and utilities reused across frontend and backend. |
+| Infrastructure | `infra`, Docker files, compose files | Runtime configuration, deployment support, Nginx/infra configs, Docker and production scripts. |
+| Documentation | `docs` | Project notes, runbooks, deployment and architecture-related documentation. |
+
+## Product modules
+
+- Public landing page and event catalog with search, filters, pagination, and event detail pages.
+- Email-based registration, login, refresh/logout flows, profile management, and protected routes.
+- User cabinet with participations, team membership, event cabinet flows, and profile-related features.
+- Team mechanics: creating teams, joining by mode, captain role, approval/rejection flows, member management, and change history.
+- Volunteer applications with user status tracking and admin moderation.
+- Admin panel for events, participants, teams, volunteers, event admins, platform users, roles, reports, and analytics.
+- Media bank with uploads, moderation, public event galleries, captions, import jobs, and event media history.
+- Support and communication features: support chat/tickets, admin support handling, email templates, broadcasts, recipients, and delivery tracking.
+- Observability and reliability: structured logging, request IDs, health/readiness endpoints, safer errors, CI/runtime checks, and deployment validation.
+
+## Tech stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | Next.js, React, TypeScript, next-intl, Tailwind CSS, Zod |
+| Backend | Express, TypeScript, Prisma Client, JWT, cookie-parser, CORS, Zod |
+| Database | PostgreSQL 17, Prisma schema, migrations, seed scripts |
+| Email / integrations | Resend, Svix, provider-aware email flows |
+| Media | Local upload storage, media asset models, public media routes |
+| Testing / quality | Vitest, Testing Library, Supertest, ESLint, TypeScript checks |
+| Infrastructure | Docker, Docker Compose, production compose config, health checks, deployment scripts |
+| Monorepo tooling | pnpm workspaces, Turbo, shared packages |
+
+## Repository structure
+
+```text
+apps/
+  web/               # Next.js frontend application
+services/
+  api/               # Express backend API and Prisma schema
+packages/
+  ui/                # Shared UI styles/components
+  shared/            # Shared types and utilities
+infra/               # Infrastructure configuration
+docs/                # Documentation and runbooks
+scripts/             # Deployment and maintenance scripts
 ```
 
-## ✨ Основные возможности
+## Quick start
 
-### Публичная часть
-- 🏠 Главная страница с hero, features, популярными событиями
-- 🎪 Каталог событий с поиском, фильтрами и пагинацией
-- 📄 Детальные страницы событий
-- 🌐 Поддержка русского и английского языков
+### Requirements
 
-### Аутентификация
-- ✉️ Трехшаговая email-регистрация: email -> код подтверждения -> пароль
-- � Отправка кода через Resend
-- �🔐 JWT access/refresh tokens
-- 🔒 Защищенные маршруты
-- 👤 Управление профилем
+- Node.js `>=24.0.0`
+- pnpm `>=10.33.0`
+- PostgreSQL 17 locally or through Docker
 
-### Пользовательский кабинет
-- 📋 Мои события (участник/волонтер/админ)
-- 👥 Мои команды
-- ⚙️ Редактирование профиля
-- 📊 Статистика участия
-
-### Командная механика
-- ➕ Создание команд для командных событий
-- 🔗 Вступление в команду (открытое/по коду/по запросу)
-- 👑 Роль капитана команды
-- ✅ Одобрение/отклонение заявок на вступление
-- 🚪 Выход из команды
-
-### Волонтерство
-- 📝 Подача заявки на волонтерство
-- ⏳ Отслеживание статуса заявки
-- ✔️ Одобрение/отклонение заявок админами
-
-### Админ-панель
-- 🎯 Двухуровневая ролевая модель:
-  - Platform-level: USER, PLATFORM_ADMIN, SUPER_ADMIN
-  - Event-level: PARTICIPANT, VOLUNTEER, EVENT_ADMIN
-- 🎪 Управление событиями (CRUD)
-- 👥 Управление участниками и командами
-- 🙋 Обработка заявок на волонтерство
-- 👨‍💼 Назначение event-admin для конкретных событий
-- 📊 Аналитика и отчеты
-
-### Аналитика
-- 📈 Трекинг ключевых действий пользователей
-- 📊 Агрегированные метрики
-- 🔝 Топ событий по просмотрам и регистрациям
-- 📉 Конверсия просмотров в регистрации
-- 🔐 Статистика и аналитика по провайдерам авторизации
-
-### Observability
-- 📝 Структурированное логирование
-- 🆔 Request ID для трассировки
-- ❌ Безопасная обработка ошибок (без утечки stack traces)
-- 🏥 Health и readiness endpoints
-
-## 🚀 Быстрый старт
-
-### Требования
-- Node.js >= 25.6.0 (`.nvmrc` и `.node-version` зафиксированы на 25.6.0)
-- pnpm >= 10.33.0
-- PostgreSQL 17 (локально или через Docker)
-
-### 1. Установка зависимостей
+### Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Настройка переменных окружения
+### Configure environment
 
 ```bash
-# Скопируйте example файл
 cp .env.example services/api/.env
-
-# Отредактируйте services/api/.env и установите:
-# - DATABASE_URL (строка подключения к PostgreSQL)
-# - JWT_ACCESS_SECRET (минимум 32 символа)
-# - JWT_REFRESH_SECRET (минимум 32 символа)
-# - CORS_ORIGIN (URL фронтенда, обычно http://localhost:3000)
-# - RESEND_API_KEY / RESEND_FROM_EMAIL для писем регистрации
 ```
 
-Для production переменные нужно обновлять в GitHub secret `PROD_ENV_FILE`, потому что деплой перезаписывает `/opt/rdevents/.env`.
+Set the required local values in `services/api/.env`, especially:
 
-#### DATABASE_URL contract
+- `DATABASE_URL`
+- `JWT_ACCESS_SECRET`
+- `JWT_REFRESH_SECRET`
+- `CORS_ORIGIN`
+- email provider variables when using real email delivery
 
-Внутри Docker Compose сети production и container-smoke PostgreSQL доступен по hostname `postgres`, а не `127.0.0.1` или `localhost`. Runner-based CI jobs не используют compose-network hostname как доказательство production topology.
-
-**Development / local:**
-```env
-DATABASE_URL=postgresql://event_platform_user:event_platform_password@localhost:5432/event_platform?schema=public
-```
-
-**Production / Docker Compose:**
-```env
-DATABASE_URL=postgresql://event_platform_user:event_platform_password@postgres:5432/event_platform?schema=public
-```
-
-**Production .env contract:**
-
-| Переменная | Значение |
-|------------|----------|
-| `POSTGRES_DB` | `event_platform` |
-| `POSTGRES_USER` | `event_platform_user` |
-| `POSTGRES_PASSWORD` | `<secret>` |
-| `DATABASE_URL` | `postgresql://event_platform_user:<password>@postgres:5432/event_platform?schema=public` |
-
-`DATABASE_URL` используется **только** внутри compose-сети. Внешний доступ к БД не влияет на runtime URL.
-
-**CI note:**
-- `Production Compose Config` validates `docker-compose.prod.yml` with a production-style env file using `@postgres:5432`
-- `container-smoke` intentionally mirrors production docker-compose topology, uses `@postgres:5432`, runs migrations, exercises the predeploy backup package, and verifies api/web/worker release markers
-- runner-based jobs (`typecheck`, `test`) do not prove compose-network reachability and may use runner-local DB wiring / placeholder DATABASE_URL values
-
-### 3. Настройка базы данных
-
-#### Вариант A: PostgreSQL через Docker Compose
+### Database setup
 
 ```bash
-# Поднять только PostgreSQL
-docker compose up -d postgres
-
-# Проверить что БД запустилась
-docker compose ps
-```
-
-#### Вариант B: Локальный PostgreSQL
-
-Убедитесь что PostgreSQL запущен и создайте базу данных:
-
-```sql
-CREATE DATABASE event_platform;
-CREATE USER event_platform_user WITH PASSWORD 'event_platform_password';
-GRANT ALL PRIVILEGES ON DATABASE event_platform TO event_platform_user;
-```
-
-### 4. Применение миграций и локальных seed данных
-
-```bash
-# Генерация Prisma Client
 pnpm db:generate
-
-# Применение схемы к БД (для разработки используйте db:push)
 pnpm db:push
-
-# Наполнение локальной БД мок-пользователями, демо-событием и справочниками
 pnpm db:seed
 ```
 
-Seed предназначен только для локальной разработки. В `NODE_ENV=production`
-он отказывается запускаться.
-
-Локальный seed создаст:
-- **Super Admin**: admin@example.com / admin123
-- **Platform Admin**: platform@example.com / platform123
-- **Event Admin**: organizer@example.com / organizer123
-- демо-пользователей для регистраций, статусов, social auth и аналитики
-- демо-событие `dom-gde-zhivet-rossiya`
-
-### 5. Запуск в режиме разработки
+### Run locally
 
 ```bash
-# Запустить API и Web одновременно
 pnpm dev
-
-# Или по отдельности:
-pnpm dev:api   # API на http://localhost:4000
-pnpm dev:web   # Web на http://localhost:3000
 ```
 
-Приложение будет доступно на:
-- 🌐 Frontend: http://localhost:3000
-- 🔌 API: http://localhost:4000
-- 🏥 Health: http://localhost:4000/health
-- ✅ Ready: http://localhost:4000/ready
+Default local URLs:
 
-## 🐳 Docker Compose (полный стек)
+| Service | URL |
+|---|---|
+| Web | `http://localhost:3000` |
+| API | `http://localhost:4000` |
+| Health | `http://localhost:4000/health` |
+| Ready | `http://localhost:4000/ready` |
 
-Запуск всего стека (PostgreSQL + API + Web) в контейнерах:
+## Docker Compose runtime
+
+The development compose file starts PostgreSQL, API, and Web containers:
 
 ```bash
-# Билд и запуск
 docker compose up -d
-
-# Просмотр логов
-docker compose logs -f
-
-# Остановка
-docker compose down
 ```
 
-## 🧹 Очистка мок-данных в production
-
-Production deploy после миграций запускает `pnpm db:cleanup-mock`: старые
-`demo/example` аккаунты и seeded event `dom-gde-zhivet-rossiya` удаляются, а
-`rinat200355@gmail.com` переводится в `SUPER_ADMIN`.
-
-Ручной запуск для production:
+Useful commands:
 
 ```bash
-NODE_ENV=production SUPER_ADMIN_EMAIL=rinat200355@gmail.com pnpm db:cleanup-mock
+pnpm docker:up
+pnpm docker:logs
+pnpm docker:down
 ```
 
-Команда не создаёт пользователя: аккаунт должен уже существовать. В локальной
-среде она специально не запускается без `ALLOW_NON_PROD_MOCK_CLEANUP=true`.
-Если нужно удалить дополнительные старые демо-события в production, передайте
-их slug через `CLEANUP_MOCK_EVENT_SLUGS`:
-
-```bash
-NODE_ENV=production CLEANUP_MOCK_EVENT_SLUGS=old-demo-event pnpm db:cleanup-mock
-```
-
-Если seeded event нужно временно оставить в production, можно явно отключить
-default event cleanup:
-
-```bash
-NODE_ENV=production CLEANUP_DEFAULT_MOCK_EVENTS=false pnpm db:cleanup-mock
-```
-
-## 📚 Основные команды
-
-### База данных
-
-```bash
-pnpm db:generate    # Генерация Prisma Client
-pnpm db:push        # Применение схемы к БД (dev)
-pnpm db:migrate     # Создание и применение миграций (prod)
-pnpm db:seed        # Наполнение локальной БД мок/seed данными
-pnpm db:cleanup-mock # Production-only очистка старых demo/example аккаунтов
-pnpm db:studio      # Открыть Prisma Studio (GUI для БД)
-```
-
-### Разработка
-
-```bash
-pnpm dev            # Запустить API + Web
-pnpm dev:api        # Только API
-pnpm dev:web        # Только Web
-```
-
-### Сборка
-
-```bash
-pnpm build          # Собрать все проекты
-pnpm build:api      # Только API
-pnpm build:web      # Только Web
-```
-
-### Качество кода
-
-```bash
-pnpm typecheck      # TypeScript проверка
-pnpm lint           # Линтинг
-```
-
-### Docker
-
-```bash
-pnpm docker:up      # docker compose up -d
-pnpm docker:down    # docker compose down
-pnpm docker:logs    # docker compose logs -f
-```
-
-## 🗂 Структура API
-
-### Аутентификация (`/api/auth`)
-- `POST /register/start` - Отправить код подтверждения на email
-- `POST /register/verify` - Подтвердить код из email
-- `POST /register/complete` - Завершить регистрацию и задать пароль
-- `POST /login` - Вход
-- `POST /logout` - Выход
-- `POST /refresh` - Обновление access token
-- `GET /me` - Текущий пользователь
-- `PATCH /profile` - Обновление профиля
-
-### События (`/api/events`)
-- `GET /` - Список событий
-- `GET /:slug` - Детали события
-- `POST /:id/register` - Регистрация на событие
-- `POST /:id/volunteer/apply` - Заявка на волонтерство
-- `GET /:id/teams` - Команды события
-- `POST /:id/teams` - Создать команду
-- `POST /:id/teams/:teamId/join` - Вступить в команду
-- `PATCH /:id/teams/:teamId` - Обновить команду (капитан)
-- `POST /:id/teams/:teamId/leave` - Покинуть команду
-- `POST /:id/teams/:teamId/members/:userId/approve` - Одобрить участника
-- `POST /:id/teams/:teamId/members/:userId/reject` - Отклонить участника
-- `DELETE /:id/teams/:teamId/members/:userId` - Удалить участника
-
-### Админка (`/api/admin`)
-- `GET /events` - Управляемые события
-- `POST /events` - Создать событие (SUPER_ADMIN)
-- `PATCH /events/:id` - Обновить событие
-- `DELETE /events/:id` - Удалить событие (SUPER_ADMIN)
-- `GET /events/:id/participants` - Участники
-- `GET /events/:id/teams` - Команды
-- `GET /events/:id/volunteers` - Волонтеры
-- `PATCH /events/:id/volunteers/:memberId` - Одобрить/отклонить волонтера
-- `GET /events/:id/event-admins` - Event admins
-- `POST /events/:id/event-admins` - Назначить event admin (SUPER_ADMIN)
-- `DELETE /events/:id/event-admins/:userId` - Удалить event admin (SUPER_ADMIN)
-- `GET /users` - Пользователи (PLATFORM_ADMIN)
-- `PATCH /users/:id/role` - Изменить роль (SUPER_ADMIN)
-- `GET /admins` - Платформенные админы (SUPER_ADMIN)
-- `GET /volunteers` - Все волонтеры (PLATFORM_ADMIN)
-- `GET /analytics` - Глобальная аналитика (PLATFORM_ADMIN)
-
-### Аналитика (`/api/analytics`)
-- `POST /track` - Трекинг события
-- `GET /summary` - Публичная статистика
-
-## 🎨 UI/UX Features
-
-- ✨ Современный premium-дизайн с indigo/violet акцентами
-- 📱 Полностью адаптивный интерфейс
-- 🎭 Loading/empty/error states
-- 🎬 Плавные анимации и transitions
-- ♿ Accessibility (focus states, ARIA labels)
-- 🌍 Интернационализация (ru/en)
-- 🍞 Toast notifications
-- 🎯 Form validation с понятными сообщениями
-
-## 🔐 Ролевая модель
-
-### Platform-level роли (User.role)
-- **USER**: Обычный зарегистрированный пользователь
-- **PLATFORM_ADMIN**: Админ платформы (опционально)
-- **SUPER_ADMIN**: Полный контроль платформы
-
-### Event-scoped роли (EventMember.role)
-- **PARTICIPANT**: Зарегистрирован на событие
-- **VOLUNTEER**: Волонтер события
-- **EVENT_ADMIN**: Администратор конкретного события
-
-**Важно**: Один и тот же пользователь может иметь разные роли в разных событиях!
-
-## 📊 Аналитика
-
-Отслеживаемые события:
-- `HOME_VIEW` - Просмотр главной
-- `EVENTS_LIST_VIEW` - Просмотр каталога
-- `EVENT_DETAIL_VIEW` - Просмотр события
-- `REGISTER_CLICK` - Клик на регистрацию
-- `EVENT_REGISTRATION` - Регистрация на событие
-- `USER_REGISTER` - Регистрация пользователя
-- `USER_LOGIN` - Вход пользователя
-- `PROVIDER_USED` - Использован провайдер
-
-## 🛠 Разработка
-
-### Структура пакетов
-
-- `@event-platform/web` - Next.js приложение
-- `@event-platform/api` - Express API
-- `@event-platform/ui` - Shared UI компоненты
-- `@event-platform/shared` - Shared types, constants, contracts
-
-### Добавление новой страницы
-
-```typescript
-// apps/web/src/app/[locale]/new-page/page.tsx
-import { getTranslations } from 'next-intl/server';
-
-export default async function NewPage() {
-  const t = await getTranslations();
-  return <div>{t('newPage.title')}</div>;
-}
-```
-
-### Добавление нового API endpoint
-
-```typescript
-// services/api/src/modules/example/example.router.ts
-import { Router } from 'express';
-import { authenticate } from '../../common/middleware.js';
-
-export const exampleRouter = Router();
-
-exampleRouter.get('/', authenticate, async (req, res) => {
-  res.json({ message: 'Example' });
-});
-```
-
-## 🐛 Отладка
-
-### Просмотр логов
-
-```bash
-# API логи
-pnpm dev:api
-
-# Посмотреть структурированные логи
-tail -f services/api/logs/*.log
-```
-
-### Prisma Studio
-
-```bash
-pnpm db:studio
-# Откроется GUI на http://localhost:5555
-```
-
-### Database queries
-
-```bash
-# Подключиться к PostgreSQL
-docker compose exec postgres psql -U event_platform_user -d event_platform
-
-# Или локально
-psql -U event_platform_user -d event_platform
-```
-
-## 🚢 Деплой
-
-> Подробная документация по CI/CD и процессу деплоя: [docs/deploy-workflow.md](docs/deploy-workflow.md)
-
-### Краткая схема
-
-```
-feature/* → PR → main → PR → production → deploy
-```
-
-### Branch Strategy
-
-| Branch | Назначение | Merge |
-|--------|------------|-------|
-| `feature/*`, `fix/*`, `hotfix/*` | Рабочие ветки | PR в `main` |
-| `main` | Интеграция | Только PR |
-| `production` | Production | PR из `main` |
-
-### CI/CD Workflows
-
-CI workflow (`.github/workflows/ci.yml`) включает следующие jobs:
-
-| Job | Назначение |
-|-----|------------|
-| `Production Safety` | Проверка deploy-инвариантов, Required Checks, hardened SSH и production-like CI контрактов |
-| `Shell Validation` | Валидация синтаксиса shell-скриптов (`bash -n`) |
-| `Production Compose Config` | Проверка `docker-compose.prod.yml` с production-style env и `DATABASE_URL=@postgres:5432` |
-| `Lint` | ESLint проверка кода |
-| `Typecheck` | TypeScript проверка типов |
-| `Test` | Unit тесты с PostgreSQL сервисом |
-| `Build` | Сборка всех проектов (API + Web) |
-| `Docker Build` | Сборка production Docker образов (api, web, report-worker, email-broadcast-worker) |
-| `Container Smoke` | Production compose smoke: миграции, predeploy backup package, api/web/workers, release markers |
-
-**Required checks** для protected branches:
-
-- `Required Checks` (aggregator, подтверждает успех всех перечисленных выше)
-
-**Запуск CI:** PR в `main`/`production`, push в `main`/`feature/**`/`fix/**`/`hotfix/**`, `workflow_dispatch`
-
-Deploy workflow (`.github/workflows/deploy-production.yml`): только production deploy, триггер — push в `production` или `workflow_dispatch` с ref `production`. Production secrets не используются в CI.
-
-### Branch Protection
-
-Recommended configuration — repository settings must be configured so that:
-
-| Branch | Merge | Required checks | Bypass |
-|--------|-------|-----------------|--------|
-| `main` | PR only | `Required Checks` | owner/admin bypass for emergency |
-| `production` | PR from `main` | `Required Checks` + environment approval | owner/admin bypass for emergency release |
-
-The `Required Checks` aggregator job is the branch-protection check and confirms all individual CI jobs passed.
-
-### Secrets для production
-
-Secrets настраиваются в GitHub → Settings → Environments → production:
-- `PROD_HOST`, `PROD_PORT`, `PROD_USER`
-- `PROD_SSH_KEY`, `PROD_ENV_FILE`
-
-### Локальная сборка (manual deploy)
-
-```bash
-pnpm install --prod=false
-pnpm build
-pnpm db:migrate deploy
-```
-
-## 🏭 Production Release Operations
-
-### Расположение артефактов на сервере
-
-| Файл | Путь | Описание |
-|------|------|----------|
-| `deploy-state.json` | `/opt/rdevents/runtime/deploy-state.json` | Текущий stage/state развертывания |
-| `.release-commit` | `/opt/rdevents/app/.release-commit` | Задеплоенный commit SHA |
-| Deploy logs | `/opt/rdevents/deploy-logs/` | Логи каждого deploy |
-| Backup DB | `/opt/rdevents/backups/` | Резервные копии БД (pre-migrate) |
-
-### Статусы в `deploy-state.json`
-
-```json
-{
-  "releaseSha": "ad2459585ab33709e7b66d0bc036e2010dd4cd52",
-  "status": "success",
-  "stage": "success",
-  "ts": "2026-04-24T11:30:00.000Z"
-}
-```
-
-Возможные значения `stage`:
-- `init`, `build-images`, `capture-built-image-ids`
-- `migrate`, `recreate-api-web`, `wait-api-healthy`, `wait-web-healthy`
-- `verify-running-image-ids`, `local-verification`, `sync-runtime-fallback`
-- `reload-nginx`, `public-verification`, `finalize-success`
-- `success` или `failed`
-
-### Проверка проде после merge
-
-Canonical smoke test:
-
-```bash
-ssh <user>@<host> "bash" < scripts/ops/prod-smoke.sh <sha>
-```
-
-Или без проверки SHA (только connectivity):
-
-```bash
-ssh <user>@<host> "bash" < scripts/ops/prod-smoke.sh
-```
-
-### Ручной force switch (аварийный recovery)
-
-Если images уже собраны, но контейнеры старые:
-
-```bash
-ssh <user>@<host>
-cd /opt/rdevents/app
-bash ./scripts/ops/prod-force-switch-latest.sh <sha>
-```
-
-Это выполнит:
-1. `prisma migrate deploy`
-2. `docker compose up -d --force-recreate --remove-orphans api web`
-3. Финальную проверку `/release.json`
-
-### GitHub Actions post-deploy summary
-
-После успешного deploy в GitHub Actions run видно:
-- `deploy-state.json` (final stage/state)
-- `.release-commit` (задеплоенный SHA)
-- Running image IDs контейнеров
-- Public release JSON с обоих endpoints
-
-
-## 📝 Лицензия
-
-Proprietary - Event Platform MVP
-
-## 🤝 Поддержка
-
-Для вопросов и проблем создавайте issue в репозитории.
-
----
-
-**Event Platform MVP** • 2026
+Docker defaults:
+
+| Service | Port |
+|---|---|
+| Web | `3000` |
+| API | `4000` |
+| PostgreSQL | `5432` |
+
+## Main scripts
+
+| Command | Purpose |
+|---|---|
+| `pnpm dev` | Run API and Web together. |
+| `pnpm dev:api` | Run only the API service. |
+| `pnpm dev:web` | Run only the web app. |
+| `pnpm build` | Build shared packages, API, and Web. |
+| `pnpm typecheck` | Run TypeScript checks across the workspace. |
+| `pnpm lint` | Run lint checks across the workspace. |
+| `pnpm test` | Run package and app tests. |
+| `pnpm db:generate` | Generate Prisma client. |
+| `pnpm db:push` | Push Prisma schema for local development. |
+| `pnpm db:deploy` | Apply migrations for deploy/runtime. |
+| `pnpm db:seed` | Seed local development data. |
+
+## API surface highlights
+
+The API includes routes for:
+
+- authentication and profile management;
+- events, event detail pages, registrations, teams, and volunteer applications;
+- admin event CRUD, users, event admins, participants, teams, volunteers, and analytics;
+- support threads/messages and admin support workflows;
+- media assets, event media gallery, captions, moderation, imports, and public media display;
+- email templates, broadcasts, recipients, consent, delivery status, and webhook processing;
+- health/readiness checks for runtime verification.
+
+## Status
+
+This repository is an evolving event-platform foundation. Many product areas are implemented as working full-stack flows, while some modules remain actively evolving as platform primitives and production-readiness improvements.
+
+## Why it matters for review
+
+For recruiters or engineering reviewers, this project demonstrates practical exposure to:
+
+- full-stack TypeScript development;
+- monorepo organization and shared package boundaries;
+- backend API design with Express, Prisma, and PostgreSQL;
+- authentication, roles, permissions, admin workflows, and production safety;
+- Dockerized local infrastructure and deployment-oriented configuration;
+- real product workflows: events, teams, volunteers, support, media, analytics, and email operations.
